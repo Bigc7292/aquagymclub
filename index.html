@@ -21,7 +21,8 @@
   --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
   --gutter:clamp(16px,4vw,56px);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button,a,summary{touch-action:manipulation}
 html{scroll-behavior:smooth;background:var(--abyss);overflow-x:clip}
 body{margin:0;background:linear-gradient(180deg,#0e5a8f 0%,#0b3a6e 18%,#061a45 55%,#03102a 100%);color:var(--foam);font:16px/1.6 var(--f-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body.gl{background:var(--abyss)}
@@ -54,11 +55,27 @@ header.nav{transition:background .3s}
 .btn.ghost{background:transparent;color:var(--foam);box-shadow:inset 0 0 0 1px rgba(234,247,255,.35)}
 .btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--caustic),0 10px 30px -10px rgba(127,240,255,.5)}
 .btn svg{width:16px;height:16px}
-.menu-btn{display:none}
+.menu-btn{display:none;width:46px;height:46px;border-radius:50%;border:1px solid rgba(234,247,255,.3);background:rgba(3,16,42,.4);color:var(--foam);cursor:pointer;place-items:center;flex:none}
+.menu-btn span{display:block;width:18px;height:2px;border-radius:2px;background:currentColor;position:relative;transition:background .2s}
+.menu-btn span::before,.menu-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;border-radius:2px;background:currentColor;transition:transform .3s}
+.menu-btn span::before{top:-6px}.menu-btn span::after{top:6px}
+.menu-open .menu-btn span{background:transparent}
+.menu-open .menu-btn span::before{transform:translateY(6px) rotate(45deg)}
+.menu-open .menu-btn span::after{transform:translateY(-6px) rotate(-45deg)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.sheet{position:fixed;inset:0;z-index:19;background:rgba(3,16,42,.94);display:flex;flex-direction:column;justify-content:center;gap:6px;padding:calc(90px + env(safe-area-inset-top,0px)) var(--gutter) calc(40px + env(safe-area-inset-bottom,0px));clip-path:circle(0% at calc(100% - 40px) 40px);transition:clip-path .55s cubic-bezier(.7,0,.2,1);visibility:hidden}
+.menu-open .sheet{clip-path:circle(150% at calc(100% - 40px) 40px);visibility:visible}
+.sheet a{font:700 clamp(32px,10vw,48px)/1.15 var(--f-display);letter-spacing:-.02em;text-decoration:none;padding-block:8px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line)}
+.sheet a small{font:400 12px/1 var(--f-mono);color:var(--apricot);letter-spacing:.1em}
+.sheet .sheet-foot{margin-top:24px;font:400 13px/1.6 var(--f-mono);color:var(--mist)}
+.menu-open{overflow:hidden}
 @media (max-width:860px){
   .links{display:none}
-  .nav .btn{padding:11px 16px;font-size:13px}
+  .menu-btn{display:grid}
+  .nav .btn{padding:0 16px;height:46px;font-size:13px}
 }
+.logo,.btn{white-space:nowrap}
+@media (max-width:380px){.nav .btn svg{display:none}.nav .btn{padding:0 14px;font-size:12.5px}.logo{font-size:13px;gap:8px}.logo svg{width:30px;height:30px}.nav-inner{gap:8px}}
 
 /* DEPTH GAUGE */
 .gauge{position:fixed;right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%);z-index:15;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font:500 11px/1 var(--f-mono);color:var(--mist);pointer-events:none}
@@ -90,6 +107,7 @@ header.nav{transition:background .3s}
 @media (max-width:860px){
   .hero-grid{grid-template-columns:1fr}
   .hero-side{display:none}
+  .scroll-cue{display:none}
   .hero{padding-block:110px 40px}
   .hero h1{font-size:clamp(44px,12.5vw,90px)}
 }
@@ -170,6 +188,16 @@ section{padding-block:clamp(80px,12vw,150px);scroll-margin-top:72px}
 .cls.circuit{background:var(--apricot);box-shadow:0 0 0 4px rgba(255,171,122,.15),0 8px 26px -8px var(--apricot)}
 .cls:hover{transform:translate(-50%,-50%) scale(1.08)}
 .cls.off{opacity:.12;pointer-events:none}
+.days{display:grid}
+.day{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;min-height:60px;padding-block:8px;border-top:1px solid rgba(127,240,255,.08)}
+.day.today{background:linear-gradient(90deg,rgba(127,240,255,.1),transparent);border-radius:12px;padding-inline:8px;margin-inline:-8px}
+.day .d{font:700 14px/1 var(--f-display)}
+.day .d small{display:block;font:400 10px/1 var(--f-mono);color:var(--caustic);letter-spacing:.1em;margin-top:5px}
+.day .slots{display:flex;flex-wrap:wrap;gap:8px}
+.day .cls{position:static;transform:none;flex-direction:row;gap:10px;min-height:44px;padding:0 16px;font-size:14px}
+.day .cls:hover{transform:none}
+.day .cls.off{display:none}
+.day .rest{font:400 12px/1 var(--f-mono);color:var(--mist);letter-spacing:.08em;opacity:.7}
 .none{padding:40px 10px;text-align:center;display:grid;gap:16px;justify-items:center;color:var(--mist)}
 .none h3{font-size:22px;color:var(--foam)}
 .class-info{margin-top:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -249,6 +277,35 @@ details .a{padding:0 22px 22px;color:#c3dbeb;max-width:62ch}
 footer{border-top:1px solid var(--line);padding-block:28px;font:400 12px/1.5 var(--f-mono);color:var(--mist);background:rgba(3,16,42,.7)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 
+/* PHONES */
+@media (max-width:640px){
+  section{padding-block:64px}
+  .sec-head{margin-bottom:28px}
+  .sec-head p{font-size:16px}
+  .panel{border-radius:22px}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:calc(var(--gutter) * -1);padding-inline:var(--gutter);-webkit-overflow-scrolling:touch}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{white-space:nowrap;min-height:44px}
+  .chip-f,.chan .act,.socials a{min-height:44px;display:inline-flex;align-items:center}
+  .chan{grid-template-columns:40px minmax(0,1fr) auto;padding:14px}
+  .chan .i{width:40px;height:40px}
+  .stat{padding-block:20px}
+  .about-copy{font-size:16px}
+  .marquee{margin-block:10px}
+  summary{padding:18px;font-size:16px;min-height:56px}
+  details .a{padding:0 18px 18px}
+  .cta-title{font-size:clamp(48px,17vw,90px)}
+  .form .btn{justify-self:stretch;justify-content:center;min-height:52px}
+}
+/* heavy glass effects are costly on phones */
+@media (max-width:860px), (hover:none){
+  .pillar,.panel,details,.chan,.marquee,.nav.scrolled{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .panel{background:rgba(6,22,58,.82)}
+  .nav.scrolled{background:rgba(3,16,42,.9)}
+  details{background:rgba(6,22,58,.75)}
+  .chan{background:rgba(6,22,58,.75)}
+}
+
 /* REVEAL (visible at rest; only a gentle rise when JS arms it) */
 .rv{transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity 1s ease}
 .armed .rv:not(.in){transform:translateY(46px);opacity:.25}
@@ -276,10 +333,21 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
       <li><a href="#faq">FAQ</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Book a class
-      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <div class="nav-right">
+      <a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Book a class
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sheet"><span></span></button>
+    </div>
   </div>
 </header>
+<nav class="sheet" id="sheet" aria-label="Menu">
+  <a href="#about">About <small>0.6 m</small></a>
+  <a href="#schedule">Schedule <small>1.4 m</small></a>
+  <a href="#rates">Rates <small>1.8 m</small></a>
+  <a href="#faq">FAQ <small>2.2 m</small></a>
+  <a href="#contact">Contact <small>2.6 m</small></a>
+  <p class="sheet-foot">WhatsApp +971 50 965 0483<br>stayfit@aquagymclub.com</p>
+</nav>
 
 <div class="gauge" aria-hidden="true">
   <span class="lab">DEPTH</span>
@@ -507,11 +575,17 @@ const LOCS={polo:'Arabian Ranches · Al Qudra Road, Dubai',jvt:'Joory Street · 
 const H0=6,H1=22, pos=t=>{const[h,m]=t.split(':').map(Number);return ((h+m/60-H0)/(H1-H0))*100};
 let loc='polo'; const filt={spin:true,circuit:true};
 const todayIdx=(new Date().getDay()+6)%7;
+const narrow=matchMedia('(max-width:640px)');
 function renderSched(){
   $('#locText').textContent=LOCS[loc];
   const body=$('#schedBody');
+  const chip=c=>`<button class="cls ${c.k}${filt[c.k]?'':' off'}" ${narrow.matches?'':`style="left:${pos(c.t)}%"`} data-book="${DAYS[c.d][1]} ${c.l} ${c.k==='spin'?'Aqua Spin':'Aqua Circuit'}" aria-label="Book ${c.k} on ${DAYS[c.d][1]} at ${c.l}">${c.k==='spin'?'Spin':'Circuit'}<small>${c.l}</small></button>`;
   if(loc==='jvt'){
     body.innerHTML='<div class="none"><h3>Class times on request</h3><p>Sessions at Mövenpick JVT are arranged with the hotel. Message us and we\'ll send this week\'s slots.</p><a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Ask for times</a></div>';
+    return;
+  }
+  if(narrow.matches){
+    body.innerHTML='<div class="days">'+DAYS.map(([s],i)=>{const cs=POLO.filter(c=>c.d===i&&filt[c.k]);return `<div class="day${i===todayIdx?' today':''}"><div class="d">${s}${i===todayIdx?'<small>TODAY</small>':''}</div><div class="slots">${cs.length?cs.map(chip).join(''):'<span class="rest">No class</span>'}</div></div>`}).join('')+'</div>';
     return;
   }
   let ticks='';for(let h=H0;h<=H1;h+=2){const lab=h===12?'12p':h>12?(h-12)+'p':h+'a';ticks+=`<span style="left:${(h-H0)/(H1-H0)*100}%">${lab}</span>`}
@@ -519,7 +593,7 @@ function renderSched(){
   DAYS.forEach(([s,f],i)=>{
     const cs=POLO.filter(c=>c.d===i);
     html+=`<div class="lane${i===todayIdx?' today':''}"><div class="d">${s}${i===todayIdx?'<small>TODAY</small>':''}</div><div class="rope">`+
-      cs.map(c=>`<button class="cls ${c.k}${filt[c.k]?'':' off'}" style="left:${pos(c.t)}%" data-book="${f} ${c.l} ${c.k==='spin'?'Aqua Spin':'Aqua Circuit'}" aria-label="Book ${c.k} on ${f} at ${c.l}">${c.k==='spin'?'Spin':'Circuit'}<small>${c.l}</small></button>`).join('')+
+      cs.map(chip).join('')+
       `</div></div>`;
   });
   body.innerHTML=html+'</div></div>';
@@ -530,6 +604,14 @@ $('#schedBody').addEventListener('click',e=>{const c=e.target.closest('[data-boo
   const url='https://wa.me/971509650483?text='+encodeURIComponent('Hi Aqua Gym Club! I\'d like to book '+c.dataset.book+' at Dubai Polo & Equestrian Club.');
   const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();});
 renderSched();
+(narrow.addEventListener?narrow.addEventListener('change',renderSched):narrow.addListener(renderSched));
+
+/* ---------- mobile menu ---------- */
+const menuBtn=$('#menuBtn');
+const setMenu=o=>{document.documentElement.classList.toggle('menu-open',o);document.body.classList.toggle('menu-open',o);menuBtn.setAttribute('aria-expanded',o);menuBtn.setAttribute('aria-label',o?'Close menu':'Open menu')};
+menuBtn.addEventListener('click',()=>setMenu(!document.body.classList.contains('menu-open')));
+$$('#sheet a').forEach(a=>a.addEventListener('click',()=>setMenu(false)));
+addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false)});
 
 /* ---------- rates ---------- */
 const PLANS={
@@ -571,7 +653,7 @@ $('#joinForm').addEventListener('submit',e=>{e.preventDefault();
 $$('.btn').forEach(b=>b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')}));
 
 /* ---------- tilt cards ---------- */
-if(!reduce)$$('[data-tilt]').forEach(c=>{
+if(!reduce&&matchMedia('(hover:hover) and (pointer:fine)').matches)$$('[data-tilt]').forEach(c=>{
   c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
     c.style.setProperty('--ry',((x-.5)*16)+'deg');c.style.setProperty('--rx',((.5-y)*14)+'deg');c.style.setProperty('--gx',x*100+'%');c.style.setProperty('--gy',y*100+'%');});
   c.addEventListener('pointerleave',()=>{c.style.setProperty('--rx','0deg');c.style.setProperty('--ry','0deg')});
@@ -602,9 +684,10 @@ let burst=()=>{};
 if(!window.THREE){return}
 const canvas=$('#water');
 let renderer;
-try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(e){return}
+const isPhone=matchMedia('(max-width:860px), (pointer:coarse)').matches;
+try{renderer=new THREE.WebGLRenderer({canvas,antialias:!isPhone,alpha:false,powerPreference:'high-performance'})}catch(e){return}
 document.body.classList.add('gl');
-renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+renderer.setPixelRatio(Math.min(devicePixelRatio,isPhone?1.25:1.75));
 renderer.autoClear=false;
 renderer.outputEncoding=THREE.sRGBEncoding;
 
@@ -685,7 +768,7 @@ const w1=new THREE.Mesh(new THREE.SphereGeometry(.36,32,24),glass);w1.position.x
 const w2=w1.clone();w2.position.x=.78;db.add(bar,w1,w2);db.scale.setScalar(.9);scene.add(db);
 
 // bubbles
-const N=reduce?120:420;const bgeo=new THREE.BufferGeometry();
+const N=reduce?120:isPhone?200:420;const bgeo=new THREE.BufferGeometry();
 const bp=new Float32Array(N*3),bs=new Float32Array(N),bv=new Float32Array(N),bph=new Float32Array(N);
 function seed(i,y){bp[i*3]=(Math.random()-.5)*22;bp[i*3+1]=y??(Math.random()-.5)*16;bp[i*3+2]=(Math.random()-.5)*8-1;bs[i]=Math.random()*.9+.15;bv[i]=Math.random()*.9+.4;bph[i]=Math.random()*6.28}
 for(let i=0;i<N;i++)seed(i);
@@ -710,7 +793,7 @@ burst=(cx,cy,n=24)=>{
     brv[i*3]=(Math.random()-.5)*1.4;brv[i*3+1]=Math.random()*2+1.2;brv[i*3+2]=(Math.random()-.5)*.6}
   U.uRipple.value.set(cx/innerWidth,1-cy/innerHeight,U.uTime.value);
 };
-addEventListener('pointerdown',e=>{if(e.target.closest('a,button,input,summary,label'))return;burst(e.clientX,e.clientY,26)});
+addEventListener('click',e=>{if(e.target.closest('a,button,input,summary,label,.sheet'))return;burst(e.clientX,e.clientY,26)});
 
 // sizing
 function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();U.uRes.value.set(w,h);bmat.uniforms.uH.value=h;}
