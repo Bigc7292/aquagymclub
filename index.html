@@ -1,0 +1,752 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Aqua Gym Club</title>
+<meta name="description" content="Aqua fitness and underwater spinning classes in Dubai. 50-minute, low-impact, high-energy workouts. No swimming needed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Onest:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --abyss:#03102a;
+  --navy:#090d5e;
+  --deep:#0b3a6e;
+  --caustic:#7ff0ff;
+  --apricot:#ffab7a;
+  --foam:#eaf7ff;
+  --mist:#9fc3dc;
+  --glass:rgba(6,22,58,.55);
+  --line:rgba(127,240,255,.18);
+  --f-display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"DM Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --gutter:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;background:var(--abyss);overflow-x:clip}
+body{margin:0;background:linear-gradient(180deg,#0e5a8f 0%,#0b3a6e 18%,#061a45 55%,#03102a 100%);color:var(--foam);font:16px/1.6 var(--f-body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.gl{background:var(--abyss)}
+#water{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block;pointer-events:none}
+main,header.nav,footer,.gauge{position:relative;z-index:2}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--caustic);outline-offset:3px;border-radius:6px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.02}
+p{margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:var(--gutter)}
+.eyebrow{font:500 12px/1 var(--f-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--caustic);display:flex;gap:10px;align-items:center}
+.eyebrow::before{content:"";width:28px;height:1px;background:currentColor;opacity:.7}
+
+/* NAV */
+header.nav{position:fixed;top:0;left:0;right:0;z-index:20;padding-top:env(safe-area-inset-top,0px)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;padding-inline:var(--gutter);max-width:1400px;margin:0 auto}
+header.nav{transition:background .3s}
+.nav.scrolled{background:rgba(3,16,42,.6);backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font:700 15px/1 var(--f-display);letter-spacing:.04em}
+.logo svg{width:34px;height:34px}
+.logo small{display:block;font:400 10px/1.2 var(--f-mono);letter-spacing:.2em;color:var(--mist);margin-top:3px}
+.links{display:flex;gap:26px;list-style:none;margin:0;padding:0}
+.links a{text-decoration:none;font-size:14px;color:var(--mist);position:relative;padding-block:6px;transition:color .2s}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:2px;background:var(--caustic);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.links a:hover{color:var(--foam)}.links a:hover::after{transform:scaleX(1)}
+.btn{--b:var(--apricot);display:inline-flex;align-items:center;gap:10px;font:600 14px/1 var(--f-body);letter-spacing:.02em;text-decoration:none;color:#1b0d05;background:var(--b);border:0;border-radius:999px;padding:14px 22px;cursor:pointer;position:relative;overflow:hidden;isolation:isolate;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(120px 120px at var(--mx,50%) var(--my,50%),rgba(255,255,255,.55),transparent 60%);opacity:0;transition:opacity .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px -8px rgba(255,171,122,.6)}
+.btn:hover::before{opacity:1}
+.btn.ghost{background:transparent;color:var(--foam);box-shadow:inset 0 0 0 1px rgba(234,247,255,.35)}
+.btn.ghost:hover{box-shadow:inset 0 0 0 1px var(--caustic),0 10px 30px -10px rgba(127,240,255,.5)}
+.btn svg{width:16px;height:16px}
+.menu-btn{display:none}
+@media (max-width:860px){
+  .links{display:none}
+  .nav .btn{padding:11px 16px;font-size:13px}
+}
+
+/* DEPTH GAUGE */
+.gauge{position:fixed;right:clamp(10px,2vw,28px);top:50%;transform:translateY(-50%);z-index:15;display:flex;flex-direction:column;align-items:flex-end;gap:10px;font:500 11px/1 var(--f-mono);color:var(--mist);pointer-events:none}
+.gauge .track{width:2px;height:180px;background:linear-gradient(var(--caustic),rgba(127,240,255,.05));border-radius:2px;position:relative}
+.gauge .dot{position:absolute;left:50%;width:10px;height:10px;margin-left:-5px;margin-top:-5px;border-radius:50%;background:var(--apricot);box-shadow:0 0 14px var(--apricot);top:0}
+.gauge .read{font-size:18px;color:var(--foam);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.gauge .lab{letter-spacing:.2em}
+@media (max-width:700px){.gauge{display:none}}
+
+/* HERO */
+.hero{min-height:min(100svh,980px);display:grid;align-items:center;padding-block:120px 70px}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:40px;align-items:center}
+.hero h1{font-weight:900;font-size:clamp(44px,8.4vw,128px);letter-spacing:-.035em;line-height:.9;margin-block:22px 26px}
+.hero h1 .row{display:block;white-space:nowrap}
+.hero h1 .ch{display:inline-block;animation:bob 5s ease-in-out infinite;animation-delay:calc(var(--i) * -.18s)}
+.hero h1 .amp{font-weight:300;color:var(--apricot);font-size:.7em;vertical-align:.1em;margin-inline:.05em}
+.hero h1 .outline{color:transparent;-webkit-text-stroke:2px var(--caustic);text-shadow:0 0 40px rgba(127,240,255,.25)}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-.06em) rotate(-1.5deg)}}
+.hero .lede{font-size:clamp(17px,1.6vw,20px);color:var(--mist);max-width:34ch}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:34px}
+.facts{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:40px;font:400 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mist)}
+.facts span{display:flex;align-items:center;gap:8px}
+.facts span::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--caustic);box-shadow:0 0 10px var(--caustic)}
+.hero-side{height:min(520px,60vh)}
+.scroll-cue{margin-top:56px;display:flex;align-items:center;gap:14px;font:400 11px/1 var(--f-mono);letter-spacing:.24em;text-transform:uppercase;color:var(--mist)}
+.scroll-cue i{width:22px;height:36px;border:1.5px solid var(--mist);border-radius:12px;position:relative}
+.scroll-cue i::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--caustic);animation:cue 1.8s ease-in infinite}
+@keyframes cue{0%{transform:translateY(0);opacity:1}100%{transform:translateY(16px);opacity:0}}
+@media (max-width:860px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-side{display:none}
+  .hero{padding-block:110px 40px}
+  .hero h1{font-size:clamp(44px,12.5vw,90px)}
+}
+
+/* MARQUEE */
+.marquee{border-block:1px solid var(--line);background:rgba(9,13,94,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);overflow:hidden;padding-block:18px;transform:rotate(-1.6deg) scale(1.03);margin-block:30px}
+.marquee .track{display:flex;width:max-content;animation:slide 38s linear infinite;gap:0}
+.marquee span{font:700 clamp(22px,3.4vw,42px)/1 var(--f-display);letter-spacing:-.01em;white-space:nowrap;padding-inline:26px;display:flex;align-items:center;gap:52px}
+.marquee span:nth-child(even){color:transparent;-webkit-text-stroke:1.2px var(--foam)}
+.marquee span::after{content:"";width:14px;height:14px;border-radius:50%;border:2px solid var(--apricot)}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{padding-block:clamp(80px,12vw,150px);scroll-margin-top:72px}
+.sec-head{display:grid;gap:18px;margin-bottom:clamp(36px,6vw,64px);max-width:760px}
+.sec-head h2{font-size:clamp(34px,5.4vw,72px);font-weight:700;letter-spacing:-.03em}
+.sec-head h2 em{font-style:normal;color:var(--caustic)}
+.sec-head p{color:var(--mist);font-size:18px;max-width:58ch}
+.depth-tag{font:400 11px/1 var(--f-mono);color:var(--apricot);letter-spacing:.14em}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(30px,6vw,90px);align-items:start}
+.about-copy{display:grid;gap:22px;font-size:18px;color:#cfe4f2}
+.about-copy .big{font:500 clamp(22px,2.4vw,30px)/1.3 var(--f-body);color:var(--foam);letter-spacing:-.01em}
+.kit{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.kit span{font:500 12px/1 var(--f-mono);letter-spacing:.08em;padding:9px 13px;border-radius:999px;border:1px solid var(--line);color:var(--caustic);background:rgba(127,240,255,.06)}
+.stats{display:grid;gap:14px}
+.stat{display:grid;grid-template-columns:auto 1fr;gap:4px 22px;align-items:end;padding:26px 0;border-top:1px solid var(--line)}
+.stat:last-child{border-bottom:1px solid var(--line)}
+.stat b{font:900 clamp(56px,7vw,92px)/.85 var(--f-display);letter-spacing:-.04em;grid-row:span 2;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,var(--foam),var(--caustic));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat b sup{font-size:.32em;vertical-align:1.6em;letter-spacing:0;margin-left:4px}
+.stat strong{font:600 17px/1.2 var(--f-body)}
+.stat span{color:var(--mist);font-size:14px}
+@media (max-width:860px){.about-grid{grid-template-columns:1fr}}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;perspective:1100px}
+.pillar{position:relative;border-radius:26px;padding:28px 24px 26px;min-height:360px;display:flex;flex-direction:column;gap:14px;background:linear-gradient(160deg,rgba(20,70,130,.55),rgba(6,22,58,.55));border:1px solid var(--line);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transform-style:preserve-3d;transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .3s;overflow:hidden}
+.pillar:hover{border-color:rgba(127,240,255,.5)}
+.pillar::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(400px 300px at var(--gx,50%) var(--gy,0%),rgba(127,240,255,.22),transparent 55%);opacity:0;transition:opacity .3s}
+.pillar:hover::after{opacity:1}
+.pillar .ic{width:64px;height:64px;transform:translateZ(40px)}
+.pillar h3{font-size:22px;font-weight:700;letter-spacing:-.01em;transform:translateZ(30px);margin-top:auto}
+.pillar p{color:#c3dbeb;font-size:15px;transform:translateZ(20px)}
+.pillar .k{font:400 11px/1 var(--f-mono);letter-spacing:.16em;color:var(--mist);text-transform:uppercase}
+.pillar.hl{background:linear-gradient(160deg,rgba(255,171,122,.9),rgba(255,120,120,.75));color:#240f06;border-color:transparent}
+.pillar.hl p,.pillar.hl .k{color:#3d1a0a}
+@media (max-width:1020px){.pillars{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.pillars{grid-template-columns:1fr}.pillar{min-height:0}}
+
+/* SCHEDULE */
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:28px;backdrop-filter:blur(14px) saturate(130%);-webkit-backdrop-filter:blur(14px) saturate(130%);padding:clamp(18px,3vw,34px)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.tab{font:500 14px/1 var(--f-body);color:var(--mist);background:transparent;border:1px solid var(--line);border-radius:999px;padding:12px 18px;cursor:pointer;transition:all .25s}
+.tab:hover{color:var(--foam);border-color:rgba(127,240,255,.45)}
+.tab[aria-selected="true"]{background:var(--foam);color:var(--abyss);border-color:var(--foam)}
+.sched-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;margin-bottom:20px}
+.loc{display:flex;gap:12px;align-items:center;color:var(--mist);font-size:14px}
+.loc svg{width:18px;height:18px;flex:none;color:var(--apricot)}
+.filters{display:flex;gap:8px}
+.chip-f{font:500 12px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;padding:9px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--mist);cursor:pointer;display:flex;gap:8px;align-items:center}
+.chip-f i{width:8px;height:8px;border-radius:50%}
+.chip-f[aria-pressed="false"]{opacity:.45}
+.lanes-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-inline:-4px;padding-inline:4px}
+.lanes{min-width:680px;display:grid;gap:0}
+.axis,.lane{display:grid;grid-template-columns:70px 1fr;align-items:center}
+.axis .ticks{position:relative;height:26px;font:400 11px/1 var(--f-mono);color:var(--mist)}
+.axis .ticks span{position:absolute;transform:translateX(-50%);top:6px;font-variant-numeric:tabular-nums}
+.lane{height:62px;border-top:1px solid rgba(127,240,255,.08)}
+.lane .d{font:700 13px/1 var(--f-display);letter-spacing:.04em}
+.lane .d small{display:block;font:400 10px/1 var(--f-mono);color:var(--mist);letter-spacing:.1em;margin-top:5px}
+.lane .rope{position:relative;height:100%}
+.lane .rope::before{content:"";position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-2px;border-radius:4px;background:repeating-linear-gradient(90deg,rgba(255,171,122,.55) 0 10px,rgba(234,247,255,.35) 10px 20px,rgba(127,240,255,.35) 20px 30px);opacity:.35}
+.lane.today{background:linear-gradient(90deg,rgba(127,240,255,.08),transparent)}
+.cls{position:absolute;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 14px;border-radius:14px;border:0;cursor:pointer;font:600 13px/1 var(--f-body);color:#08122b;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .3s,box-shadow .3s;white-space:nowrap}
+.cls small{font:500 11px/1 var(--f-mono);opacity:.8}
+.cls.spin{background:var(--caustic);box-shadow:0 0 0 4px rgba(127,240,255,.15),0 8px 26px -8px var(--caustic)}
+.cls.circuit{background:var(--apricot);box-shadow:0 0 0 4px rgba(255,171,122,.15),0 8px 26px -8px var(--apricot)}
+.cls:hover{transform:translate(-50%,-50%) scale(1.08)}
+.cls.off{opacity:.12;pointer-events:none}
+.none{padding:40px 10px;text-align:center;display:grid;gap:16px;justify-items:center;color:var(--mist)}
+.none h3{font-size:22px;color:var(--foam)}
+.class-info{margin-top:22px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ci{border:1px solid var(--line);border-radius:18px;padding:18px 20px;display:grid;gap:6px}
+.ci h4{margin:0;font:700 16px/1.2 var(--f-display);display:flex;gap:10px;align-items:center}
+.ci h4 i{width:10px;height:10px;border-radius:50%}
+.ci p{color:var(--mist);font-size:14px}
+@media (max-width:640px){.class-info{grid-template-columns:1fr}}
+
+/* RATES */
+.rate-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.rate{position:relative;border-radius:24px;padding:26px 22px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(15,60,115,.5),rgba(4,18,48,.6));display:flex;flex-direction:column;gap:10px;transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .3s;overflow:hidden}
+.rate:hover{transform:translateY(-6px);border-color:rgba(127,240,255,.5)}
+.rate .n{font:400 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mist)}
+.rate .p{font:900 clamp(34px,3.6vw,48px)/1 var(--f-display);letter-spacing:-.04em;font-variant-numeric:tabular-nums;display:flex;align-items:baseline;gap:8px}
+.rate .p small{font:500 13px/1 var(--f-mono);letter-spacing:.1em;color:var(--caustic)}
+.rate .per{font-size:14px;color:#c3dbeb}
+.rate .v{margin-top:auto;padding-top:16px;border-top:1px dashed var(--line);font:400 12px/1.4 var(--f-mono);color:var(--mist)}
+.rate .save{position:absolute;top:18px;right:18px;font:600 11px/1 var(--f-mono);letter-spacing:.08em;background:var(--apricot);color:#240f06;padding:6px 9px;border-radius:999px}
+.rate .fill{position:absolute;left:0;right:0;bottom:0;height:var(--h,0%);background:linear-gradient(180deg,rgba(127,240,255,.12),rgba(127,240,255,.02));pointer-events:none;transition:height 1.2s cubic-bezier(.2,.8,.2,1);z-index:-1}
+.rate{isolation:isolate}
+.terms{margin-top:24px;display:flex;flex-wrap:wrap;gap:10px 26px;font-size:13px;color:var(--mist)}
+.terms span::before{content:"— ";color:var(--apricot)}
+@media (max-width:1020px){.rate-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.rate-grid{grid-template-columns:1fr}}
+
+/* FAQ */
+.faq-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(30px,6vw,80px);align-items:start}
+.faq-list{display:grid;gap:10px}
+details{border:1px solid var(--line);border-radius:18px;background:rgba(6,22,58,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:background .3s,border-color .3s}
+details[open]{background:rgba(12,50,100,.55);border-color:rgba(127,240,255,.4)}
+summary{list-style:none;cursor:pointer;padding:20px 22px;display:flex;justify-content:space-between;gap:16px;align-items:center;font:600 17px/1.35 var(--f-body)}
+summary::-webkit-details-marker{display:none}
+summary .pm{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);position:relative;transition:transform .35s,background .3s}
+summary .pm::before,summary .pm::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:1.5px;background:var(--caustic);transform:translate(-50%,-50%)}
+summary .pm::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .35s}
+details[open] summary .pm{background:var(--caustic)}
+details[open] summary .pm::before{background:var(--abyss)}
+details[open] summary .pm::after{transform:translate(-50%,-50%) rotate(0);background:var(--abyss)}
+details .a{padding:0 22px 22px;color:#c3dbeb;max-width:62ch}
+.sticky-note{position:sticky;top:110px;display:grid;gap:18px}
+.sticky-note .card{border-radius:24px;padding:24px;background:linear-gradient(150deg,var(--navy),#0b3a6e);border:1px solid var(--line);display:grid;gap:10px}
+.sticky-note .card b{font:700 16px/1.2 var(--f-display)}
+.sticky-note .card p{color:var(--mist);font-size:15px}
+.spec{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.spec div{border:1px solid var(--line);border-radius:14px;padding:12px}
+.spec small{display:block;font:400 10px/1 var(--f-mono);letter-spacing:.14em;color:var(--mist);text-transform:uppercase;margin-bottom:8px}
+.spec strong{font:700 22px/1 var(--f-display);font-variant-numeric:tabular-nums}
+@media (max-width:860px){.faq-grid{grid-template-columns:1fr}.sticky-note{position:static}}
+
+/* CONTACT */
+.contact{padding-bottom:60px}
+.contact-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,5vw,60px)}
+.cta-title{font-size:clamp(46px,8vw,120px);font-weight:900;letter-spacing:-.045em;line-height:.88}
+.cta-title .outline{color:transparent;-webkit-text-stroke:2px var(--apricot)}
+.form{display:grid;gap:12px;margin-top:30px;max-width:520px}
+.field{position:relative}
+.field input{width:100%;font:500 16px/1 var(--f-body);color:var(--foam);background:rgba(3,16,42,.55);border:1px solid var(--line);border-radius:16px;padding:24px 18px 10px;transition:border-color .25s,box-shadow .25s}
+.field label{position:absolute;left:19px;top:17px;font-size:15px;color:var(--mist);pointer-events:none;transition:all .2s}
+.field input:focus{outline:none;border-color:var(--caustic);box-shadow:0 0 0 4px rgba(127,240,255,.15)}
+.field input:focus+label,.field input:not(:placeholder-shown)+label{top:8px;font:500 10px/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--caustic)}
+.form .btn{justify-self:start;margin-top:6px}
+.form-msg{min-height:1.4em;font-size:14px;color:var(--caustic)}
+.channels{display:grid;gap:12px;align-content:start}
+.chan{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 18px;border-radius:18px;border:1px solid var(--line);background:rgba(6,22,58,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:border-color .25s,transform .25s}
+.chan:hover{border-color:rgba(127,240,255,.45);transform:translateX(4px)}
+.chan .i{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(127,240,255,.1);color:var(--caustic)}
+.chan .i svg{width:20px;height:20px}
+.chan small{display:block;font:400 10px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--mist);margin-bottom:6px}
+.chan span{font-weight:600;user-select:all;overflow-wrap:anywhere}
+.chan .act{font:500 12px/1 var(--f-mono);letter-spacing:.06em;color:var(--foam);background:transparent;border:1px solid var(--line);border-radius:999px;padding:9px 12px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.chan .act:hover{background:var(--foam);color:var(--abyss)}
+.socials{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.socials a{font:500 13px/1 var(--f-mono);letter-spacing:.06em;text-decoration:none;padding:11px 14px;border-radius:999px;border:1px solid var(--line);transition:all .25s}
+.socials a:hover{background:var(--apricot);color:#240f06;border-color:var(--apricot)}
+@media (max-width:860px){.contact-grid{grid-template-columns:1fr}}
+footer{border-top:1px solid var(--line);padding-block:28px;font:400 12px/1.5 var(--f-mono);color:var(--mist);background:rgba(3,16,42,.7)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+/* REVEAL (visible at rest; only a gentle rise when JS arms it) */
+.rv{transition:transform 1s cubic-bezier(.2,.8,.2,1),opacity 1s ease}
+.armed .rv:not(.in){transform:translateY(46px);opacity:.25}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:var(--foam);color:var(--abyss);font:600 14px/1 var(--f-body);padding:14px 20px;border-radius:999px;z-index:40;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.toast.show{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  html{scroll-behavior:auto}
+  .armed .rv:not(.in){transform:none;opacity:1}
+}
+</style>
+
+<canvas id="water" aria-hidden="true"></canvas>
+
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top" aria-label="Aqua Gym Club home">
+      <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><circle cx="20" cy="20" r="18" stroke="#7ff0ff" stroke-width="2"/><path d="M6 22c3.5 0 3.5-3 7-3s3.5 3 7 3 3.5-3 7-3 3.5 3 7 3" stroke="#ffab7a" stroke-width="2.4" stroke-linecap="round"/><path d="M9 28c3 0 3-2.4 5.5-2.4S17 28 20 28s3-2.4 5.5-2.4S28 28 31 28" stroke="#7ff0ff" stroke-width="2" stroke-linecap="round" opacity=".7"/><circle cx="20" cy="12" r="3" fill="#eaf7ff"/></svg>
+      <span>AQUA GYM<small>CLUB · DUBAI</small></span>
+    </a>
+    <ul class="links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#schedule">Schedule</a></li>
+      <li><a href="#rates">Rates</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Book a class
+      <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  </div>
+</header>
+
+<div class="gauge" aria-hidden="true">
+  <span class="lab">DEPTH</span>
+  <div class="track"><div class="dot" id="gdot"></div></div>
+  <span class="read" id="gread">0.00 m</span>
+</div>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">Dubai · Underwater fitness</div>
+        <h1 aria-label="Aqua fitness and spinning">
+          <span class="row" data-split>AQUA</span>
+          <span class="row"><span class="outline" data-split>FITNESS</span></span>
+          <span class="row"><span class="amp">&amp;</span><span data-split>SPIN</span></span>
+        </h1>
+        <p class="lede">Low-impact aqua fitness meets high-intensity spinning. Fifty minutes in the water, on underwater bikes, for results you feel after a handful of sessions.</p>
+        <div class="ctas">
+          <a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Book a class
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="btn ghost" href="#schedule">See this week's classes</a>
+        </div>
+        <div class="facts"><span>50-min classes</span><span>No swimming needed</span><span>All levels &amp; pregnancy-safe</span></div>
+        <div class="scroll-cue"><i></i>Scroll to dive in</div>
+      </div>
+      <div class="hero-side" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Aqua Spin</span><span>Circuit</span><span>Rehab</span><span>Prenatal</span><span>Personal Training</span><span>Burn · Tone · Float</span>
+      <span>Aqua Spin</span><span>Circuit</span><span>Rehab</span><span>Prenatal</span><span>Personal Training</span><span>Burn · Tone · Float</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about" data-depth="0.6">
+    <div class="wrap about-grid">
+      <div class="rv">
+        <div class="sec-head">
+          <span class="depth-tag">— 0.6 m · THE CLUB</span>
+          <h2>Where energy elevates and <em>transformation</em> begins.</h2>
+        </div>
+        <div class="about-copy">
+          <p class="big">Every class is a 50-minute workout in the pool, powered by specialist underwater gear.</p>
+          <p>The water carries your weight and pushes back on every move, so you train hard without pounding your joints. Beginners, athletes, seniors, mums-to-be and people coming back from injury all work out side by side, with moves adjusted for each person.</p>
+          <div class="kit" aria-label="Equipment we use"><span>Underwater bikes</span><span>Aqua dumbbells</span><span>Water bells</span><span>Upbeat playlists</span></div>
+        </div>
+      </div>
+      <div class="stats rv">
+        <div class="stat"><b data-count="50">50</b><strong>minutes per class</strong><span>Warm-up, work, cool-down. In and out on your lunch break.</span></div>
+        <div class="stat"><b><span data-count="3">3</span>–<span data-count="5">5</span></b><strong>sessions to notice it</strong><span>Keep showing up and the changes keep coming.</span></div>
+        <div class="stat"><b data-count="0">0</b><strong>swimming skills needed</strong><span>You stand or ride. Your head stays well above water.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PILLARS -->
+  <section id="why" data-depth="1.0" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="depth-tag">— 1.0 m · WHY THE WATER</span>
+        <h2>Four reasons people <em>dive in.</em></h2>
+      </div>
+      <div class="pillars">
+        <article class="pillar rv" data-tilt>
+          <span class="k">For fitness</span>
+          <svg class="ic" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="18" cy="42" r="12" stroke="#7ff0ff" stroke-width="3"/><circle cx="46" cy="42" r="12" stroke="#7ff0ff" stroke-width="3"/><path d="M18 42l10-18h12l6 18M28 24l-4-6h-6M40 24l4-8h6" stroke="#eaf7ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Sculpt the whole body</h3>
+          <p>Tone muscle, burn calories, smooth out cellulite and build heart health, all while the water protects your joints.</p>
+        </article>
+        <article class="pillar rv" data-tilt>
+          <span class="k">For fun</span>
+          <svg class="ic" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M8 40c6 0 6-5 12-5s6 5 12 5 6-5 12-5 6 5 12 5" stroke="#7ff0ff" stroke-width="3" stroke-linecap="round"/><path d="M40 12v18a5 5 0 1 1-3-4.6V16l14-4v14a5 5 0 1 1-3-4.6V12" stroke="#ffab7a" stroke-width="3" stroke-linejoin="round"/><circle cx="16" cy="22" r="3" fill="#eaf7ff"/><circle cx="24" cy="14" r="2" fill="#eaf7ff"/></svg>
+          <h3>Endorphins on tap</h3>
+          <p>Loud music, splashy high-energy sets and water resistance. You leave buzzing, refreshed and ready for the day.</p>
+        </article>
+        <article class="pillar rv" data-tilt>
+          <span class="k">For rehabilitation</span>
+          <svg class="ic" viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 54s-20-11-20-26a11 11 0 0 1 20-6 11 11 0 0 1 20 6c0 15-20 26-20 26z" stroke="#7ff0ff" stroke-width="3" stroke-linejoin="round"/><path d="M18 32h8l3-6 5 12 3-6h9" stroke="#eaf7ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <h3>Recover with support</h3>
+          <p>A gentle, low-impact space to rebuild strength and mobility after injury, with the water doing the heavy lifting.</p>
+        </article>
+        <article class="pillar hl rv" data-tilt>
+          <span class="k">For a healthier you</span>
+          <svg class="ic" viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="12" stroke="#240f06" stroke-width="3"/><path d="M32 8v6M32 50v6M8 32h6M50 32h6M15 15l4 4M45 45l4 4M49 15l-4 4M19 45l-4 4" stroke="#240f06" stroke-width="3" stroke-linecap="round"/></svg>
+          <h3>Start your journey</h3>
+          <p>Effective, enjoyable and built to stick. Book a first class and feel the difference in the water.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULE -->
+  <section id="schedule" data-depth="1.4">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="depth-tag">— 1.4 m · TIMETABLE</span>
+        <h2>Pick your <em>lane.</em></h2>
+        <p>Weekly classes across two Dubai pools. Tap a class to book it on WhatsApp.</p>
+      </div>
+      <div class="panel rv">
+        <div class="tabs" role="tablist" aria-label="Location">
+          <button class="tab" role="tab" id="tab-polo" aria-selected="true" data-loc="polo">Dubai Polo &amp; Equestrian Club</button>
+          <button class="tab" role="tab" id="tab-jvt" aria-selected="false" data-loc="jvt">Mövenpick JVT</button>
+        </div>
+        <div class="sched-top">
+          <div class="loc"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg><span id="locText">Arabian Ranches · Al Qudra Road, Dubai</span></div>
+          <div class="filters">
+            <button class="chip-f" aria-pressed="true" data-f="spin"><i style="background:#7ff0ff"></i>Spin</button>
+            <button class="chip-f" aria-pressed="true" data-f="circuit"><i style="background:#ffab7a"></i>Circuit</button>
+          </div>
+        </div>
+        <div id="schedBody"></div>
+        <div class="class-info">
+          <div class="ci"><h4><i style="background:#7ff0ff"></i>Aqua Spin</h4><p>Underwater bike intervals set to music. Big calorie burn, zero impact on knees and hips.</p></div>
+          <div class="ci"><h4><i style="background:#ffab7a"></i>Aqua Circuit</h4><p>Stations of bikes, dumbbells and water bells. Strength and cardio in one flowing session.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RATES -->
+  <section id="rates" data-depth="1.8">
+    <div class="wrap">
+      <div class="sec-head rv">
+        <span class="depth-tag">— 1.8 m · RATES</span>
+        <h2>Go deeper, <em>pay less</em> per class.</h2>
+        <p>Prices in UAE dirhams. The bigger the pack, the lower the price of each class.</p>
+      </div>
+      <div class="tabs rv" role="tablist" aria-label="Training type">
+        <button class="tab" role="tab" id="rt-group" aria-selected="true" data-plan="group">Group training</button>
+        <button class="tab" role="tab" id="rt-club" aria-selected="false" data-plan="club">Personal · at the club</button>
+        <button class="tab" role="tab" id="rt-off" aria-selected="false" data-plan="off">Personal · your pool</button>
+      </div>
+      <div class="rate-grid rv" id="rateGrid"></div>
+      <div class="terms rv">
+        <span>Payments are non-refundable</span>
+        <span>Packages are personal and can't be shared or transferred</span>
+        <span>Group packages can be frozen; freezing uses 1 class</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" data-depth="2.2">
+    <div class="wrap faq-grid">
+      <div class="sticky-note rv">
+        <div class="sec-head" style="margin:0">
+          <span class="depth-tag">— 2.2 m · FAQ</span>
+          <h2>Before you <em>jump in.</em></h2>
+        </div>
+        <div class="card">
+          <b>What to bring</b>
+          <p>A swimsuit and a bottle of water. We supply all the aquatic equipment.</p>
+          <div class="spec">
+            <div><small>Min height</small><strong>150 cm</strong></div>
+            <div><small>Max weight</small><strong>130 kg</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="faq-list rv">
+        <details open><summary>Do I need to know how to swim?<span class="pm"></span></summary><div class="a">No. Every exercise is done standing in the pool or riding an underwater bike.</div></details>
+        <details><summary>Are the classes right for me?<span class="pm"></span></summary><div class="a">Yes. Beginners, athletes, seniors, pregnant women and people recovering from injury all take part, and we adjust the moves for each person.</div></details>
+        <details><summary>Is there an age or size limit?<span class="pm"></span></summary><div class="a">There's no age limit. For safety on the bikes we recommend a minimum height of 150 cm and a maximum weight of 130 kg.</div></details>
+        <details><summary>How soon will I see results?<span class="pm"></span></summary><div class="a">Most people notice improvements after 3 to 5 sessions. Bigger changes come with regular classes.</div></details>
+        <details><summary>Is aqua fitness good during pregnancy?<span class="pm"></span></summary><div class="a">It can ease aches and swelling, improve circulation, help lower the risk of gestational diabetes and support recovery after birth. Check with your doctor first and tell your coach.</div></details>
+        <details><summary>Do you offer personal training?<span class="pm"></span></summary><div class="a">Yes, one-to-one or in pairs on the aqua bikes, at our partner clubs and hotels or in your own private pool.</div></details>
+        <details><summary>Can I share my package?<span class="pm"></span></summary><div class="a">No. Packages are for one person only.</div></details>
+        <details><summary>How do I book?<span class="pm"></span></summary><div class="a">Message us on WhatsApp, book through the website, or contact the partner hotel or club directly.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact" data-depth="2.6">
+    <div class="wrap contact-grid">
+      <div class="rv">
+        <span class="depth-tag">— 2.6 m · THE DEEP END</span>
+        <h2 class="cta-title" style="margin-top:20px">COUNT<br><span class="outline">ME</span> IN.</h2>
+        <form class="form" id="joinForm" novalidate>
+          <div class="field"><input id="jn" name="name" placeholder=" " autocomplete="name" required><label for="jn">Your name</label></div>
+          <div class="field"><input id="je" name="email" type="email" placeholder=" " autocomplete="email" required><label for="je">Email address</label></div>
+          <button class="btn" type="submit">Count me in
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <p class="form-msg" id="formMsg" role="status"></p>
+        </form>
+      </div>
+      <div class="channels rv">
+        <div class="chan"><div class="i"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div><div><small>WhatsApp · fastest</small><span>+971 50 965 0483</span></div><a class="act" href="https://wa.me/971509650483" target="_blank" rel="noopener">Chat</a></div>
+        <div class="chan"><div class="i"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div><div><small>Phone</small><span>+971 509 650 483</span></div><button class="act" data-copy="+971509650483">Copy</button></div>
+        <div class="chan"><div class="i"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6 9-6" stroke="currentColor" stroke-width="2"/></svg></div><div><small>Email</small><span>stayfit@aquagymclub.com</span></div><button class="act" data-copy="stayfit@aquagymclub.com">Copy</button></div>
+        <div class="chan"><div class="i"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 22s7-7.2 7-12.5A7 7 0 0 0 5 9.5C5 14.8 12 22 12 22z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9.5" r="2.5" stroke="currentColor" stroke-width="2"/></svg></div><div><small>Find us</small><span>Mövenpick Jumeirah Village Triangle, Joory Street, Dubai</span></div><a class="act" href="https://www.google.com/maps/search/?api=1&amp;query=M%C3%B6venpick+Jumeirah+Village+Triangle+Dubai" target="_blank" rel="noopener">Map</a></div>
+        <div class="socials">
+          <a href="https://www.instagram.com/aquagymdubai" target="_blank" rel="noopener">Instagram @aquagymdubai</a>
+          <a href="https://www.tiktok.com/@aquagymdubai" target="_blank" rel="noopener">TikTok</a>
+          <a href="https://www.facebook.com/search/top?q=aquagymdubai" target="_blank" rel="noopener">Facebook</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap"><span>© Aqua Gym Club · Dubai, UAE</span><span>Aqua fitness &amp; spinning · Stay fit</span></div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+(function(){
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $ = (s,c=document)=>c.querySelector(s), $$=(s,c=document)=>[...c.querySelectorAll(s)];
+
+/* ---------- split hero letters ---------- */
+$$('[data-split]').forEach(el=>{
+  const t=el.textContent; el.textContent='';
+  [...t].forEach((c,i)=>{const s=document.createElement('span');s.className='ch';s.style.setProperty('--i',i+el.closest('.row').parentNode.children.length*0+[...$$('[data-split]')].indexOf(el)*4);s.textContent=c;s.setAttribute('aria-hidden','true');el.appendChild(s);});
+});
+
+/* ---------- schedule ---------- */
+const DAYS=[['Mon','Monday'],['Tue','Tuesday'],['Wed','Wednesday'],['Thu','Thursday'],['Fri','Friday'],['Sat','Saturday'],['Sun','Sunday']];
+const POLO=[{d:0,t:'19:15',l:'7:15 PM',k:'circuit'},{d:1,t:'08:30',l:'8:30 AM',k:'spin'},{d:2,t:'19:15',l:'7:15 PM',k:'spin'},{d:3,t:'19:15',l:'7:15 PM',k:'spin'},{d:4,t:'09:00',l:'9:00 AM',k:'circuit'},{d:6,t:'08:30',l:'8:30 AM',k:'spin'}];
+const LOCS={polo:'Arabian Ranches · Al Qudra Road, Dubai',jvt:'Joory Street · Jumeirah Village Triangle, Dubai'};
+const H0=6,H1=22, pos=t=>{const[h,m]=t.split(':').map(Number);return ((h+m/60-H0)/(H1-H0))*100};
+let loc='polo'; const filt={spin:true,circuit:true};
+const todayIdx=(new Date().getDay()+6)%7;
+function renderSched(){
+  $('#locText').textContent=LOCS[loc];
+  const body=$('#schedBody');
+  if(loc==='jvt'){
+    body.innerHTML='<div class="none"><h3>Class times on request</h3><p>Sessions at Mövenpick JVT are arranged with the hotel. Message us and we\'ll send this week\'s slots.</p><a class="btn" href="https://wa.me/971509650483" target="_blank" rel="noopener">Ask for times</a></div>';
+    return;
+  }
+  let ticks='';for(let h=H0;h<=H1;h+=2){const lab=h===12?'12p':h>12?(h-12)+'p':h+'a';ticks+=`<span style="left:${(h-H0)/(H1-H0)*100}%">${lab}</span>`}
+  let html=`<div class="lanes-scroll"><div class="lanes"><div class="axis"><span></span><div class="ticks">${ticks}</div></div>`;
+  DAYS.forEach(([s,f],i)=>{
+    const cs=POLO.filter(c=>c.d===i);
+    html+=`<div class="lane${i===todayIdx?' today':''}"><div class="d">${s}${i===todayIdx?'<small>TODAY</small>':''}</div><div class="rope">`+
+      cs.map(c=>`<button class="cls ${c.k}${filt[c.k]?'':' off'}" style="left:${pos(c.t)}%" data-book="${f} ${c.l} ${c.k==='spin'?'Aqua Spin':'Aqua Circuit'}" aria-label="Book ${c.k} on ${f} at ${c.l}">${c.k==='spin'?'Spin':'Circuit'}<small>${c.l}</small></button>`).join('')+
+      `</div></div>`;
+  });
+  body.innerHTML=html+'</div></div>';
+}
+$$('[data-loc]').forEach(b=>b.addEventListener('click',()=>{loc=b.dataset.loc;$$('[data-loc]').forEach(x=>x.setAttribute('aria-selected',x===b));renderSched();}));
+$$('[data-f]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.f;filt[k]=!filt[k];b.setAttribute('aria-pressed',filt[k]);renderSched();}));
+$('#schedBody').addEventListener('click',e=>{const c=e.target.closest('[data-book]');if(!c)return;
+  const url='https://wa.me/971509650483?text='+encodeURIComponent('Hi Aqua Gym Club! I\'d like to book '+c.dataset.book+' at Dubai Polo & Equestrian Club.');
+  const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();});
+renderSched();
+
+/* ---------- rates ---------- */
+const PLANS={
+  group:[{n:'Single class',p:130,c:1},{n:'5-class pack',p:600,c:5,v:'Valid 2 months'},{n:'10-class pack',p:1100,c:10,v:'Valid 4 months'},{n:'20-class pack',p:2000,c:20,v:'Valid 6 months'}],
+  club:[{n:'Single session',p:350,c:1},{n:'10-session pack',p:3000,c:10},{n:'Dual session',p:500,c:1,duo:1},{n:'10 dual sessions',p:4500,c:10,duo:1}],
+  off:[{n:'Single session',p:400,c:1},{n:'10-session pack',p:3500,c:10},{n:'Dual session',p:550,c:1,duo:1},{n:'10 dual sessions',p:5000,c:10,duo:1}]
+};
+function countUp(el,to,dur=900){if(reduce){el.textContent=to.toLocaleString('en-US');return}
+  const t0=performance.now(),from=0;(function f(t){const k=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-k,4);el.textContent=Math.round(from+(to-from)*e).toLocaleString('en-US');if(k<1)requestAnimationFrame(f)})(t0);}
+function renderRates(plan){
+  const list=PLANS[plan],g=$('#rateGrid');
+  g.innerHTML=list.map(r=>{
+    const base=list.find(x=>x.c===1&&!!x.duo===!!r.duo).p, per=r.p/r.c, save=Math.round((1-per/base)*100);
+    const perTxt=r.duo?`${Math.round(per).toLocaleString('en-US')} AED per session for two`:`${Math.round(per).toLocaleString('en-US')} AED per ${plan==='group'?'class':'session'}`;
+    const v=r.v||(plan==='group'?'Pay as you go':plan==='club'?'At a partner club or hotel':'At your private pool');
+    return `<div class="rate">${save>0?`<span class="save">SAVE ${save}%</span>`:''}<span class="n">${r.n}</span><div class="p"><span data-to="${r.p}">0</span><small>AED</small></div><span class="per">${perTxt}</span><span class="v">${v}</span></div>`;
+  }).join('');
+  $$('[data-to]',g).forEach(el=>countUp(el,+el.dataset.to));
+}
+$$('[data-plan]').forEach(b=>b.addEventListener('click',()=>{$$('[data-plan]').forEach(x=>x.setAttribute('aria-selected',x===b));renderRates(b.dataset.plan);}));
+renderRates('group');
+
+/* ---------- toast / copy / form ---------- */
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)};
+$$('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+  const v=b.dataset.copy;
+  (navigator.clipboard?navigator.clipboard.writeText(v):Promise.reject()).then(()=>toast('Copied '+v)).catch(()=>{
+    const s=b.parentNode.querySelector('span');const r=document.createRange();r.selectNodeContents(s);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast('Selected. Press Ctrl+C to copy');});
+}));
+$('#joinForm').addEventListener('submit',e=>{e.preventDefault();
+  const n=$('#jn').value.trim(),m=$('#je').value.trim(),msg=$('#formMsg');
+  if(!n){msg.textContent='Add your name so we know who to welcome.';$('#jn').focus();return}
+  if(!/^\S+@\S+\.\S+$/.test(m)){msg.textContent='That email looks incomplete. Check it and try again.';$('#je').focus();return}
+  msg.textContent=`Thanks, ${n}! This preview doesn't send anything yet. Connect the form to your mailing list to go live.`;
+  burst(innerWidth/2,innerHeight*0.7,60);
+});
+
+/* ---------- magnetic button glow ---------- */
+$$('.btn').forEach(b=>b.addEventListener('pointermove',e=>{const r=b.getBoundingClientRect();b.style.setProperty('--mx',(e.clientX-r.left)+'px');b.style.setProperty('--my',(e.clientY-r.top)+'px')}));
+
+/* ---------- tilt cards ---------- */
+if(!reduce)$$('[data-tilt]').forEach(c=>{
+  c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+    c.style.setProperty('--ry',((x-.5)*16)+'deg');c.style.setProperty('--rx',((.5-y)*14)+'deg');c.style.setProperty('--gx',x*100+'%');c.style.setProperty('--gy',y*100+'%');});
+  c.addEventListener('pointerleave',()=>{c.style.setProperty('--rx','0deg');c.style.setProperty('--ry','0deg')});
+});
+
+/* ---------- reveal + counters ---------- */
+if('IntersectionObserver' in window && !reduce){
+  const rvs=$$('.rv'); const vh=innerHeight;
+  rvs.forEach(el=>{if(el.getBoundingClientRect().top<vh*0.9)el.classList.add('in')});
+  document.documentElement.classList.add('armed');
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);
+    $$('[data-count]',e.target).forEach(n=>countUp(n,+n.dataset.count,1400));}}),{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  rvs.forEach((el,i)=>{el.style.transitionDelay=(el.parentNode.children.length>2?([...el.parentNode.children].indexOf(el)%4)*90:0)+'ms';io.observe(el)});
+}
+
+/* ---------- scroll: nav + depth gauge ---------- */
+let scrollK=0;
+function onScroll(){
+  const max=document.documentElement.scrollHeight-innerHeight; scrollK=max>0?scrollY/max:0;
+  $('#nav').classList.toggle('scrolled',scrollY>30);
+  $('#gdot').style.top=(scrollK*100)+'%';
+  $('#gread').textContent=(scrollK*2.8).toFixed(2)+' m';
+}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+/* ---------- WebGL underwater world ---------- */
+let burst=()=>{};
+if(!window.THREE){return}
+const canvas=$('#water');
+let renderer;
+try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'})}catch(e){return}
+document.body.classList.add('gl');
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.75));
+renderer.autoClear=false;
+renderer.outputEncoding=THREE.sRGBEncoding;
+
+// Background: full-screen caustics shader
+const bgScene=new THREE.Scene(), bgCam=new THREE.OrthographicCamera(-1,1,1,-1,0,1);
+const U={uTime:{value:0},uRes:{value:new THREE.Vector2()},uMouse:{value:new THREE.Vector2(.5,.5)},uDepth:{value:0},uRipple:{value:new THREE.Vector3(0,0,-10)}};
+const bg=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShaderMaterial({uniforms:U,depthWrite:false,depthTest:false,
+vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}`,
+fragmentShader:`
+precision highp float;varying vec2 vUv;
+uniform float uTime,uDepth;uniform vec2 uRes,uMouse;uniform vec3 uRipple;
+#define TAU 6.28318530718
+float caustic(vec2 uv,float t){
+  vec2 p=mod(uv*TAU,TAU)-250.;vec2 i=p;float c=1.;float inten=.005;
+  for(int n=0;n<5;n++){float tt=t*(1.-(3.5/float(n+1)));
+    i=p+vec2(cos(tt-i.x)+sin(tt+i.y),sin(tt-i.y)+cos(tt+i.x));
+    c+=1./length(vec2(p.x/(sin(i.x+tt)/inten),p.y/(cos(i.y+tt)/inten)));}
+  c/=5.;c=1.17-pow(c,1.4);return pow(abs(c),8.);
+}
+float hash(vec2 p){return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453);}
+void main(){
+  vec2 uv=vUv;float asp=uRes.x/uRes.y;vec2 p=vec2(uv.x*asp,uv.y);
+  float t=uTime*.35;
+  // mouse ripple distortion
+  vec2 m=vec2(uMouse.x*asp,uMouse.y);float md=length(p-m);
+  p+=normalize(p-m+1e-4)*sin(md*38.-uTime*5.)*.006*exp(-md*5.);
+  vec2 r=vec2(uRipple.x*asp,uRipple.y);float rd=length(p-r);float ra=uTime-uRipple.z;
+  p+=normalize(p-r+1e-4)*sin(rd*50.-ra*14.)*.012*exp(-abs(rd-ra*.35)*18.)*exp(-ra*1.2);
+  float d=clamp(uDepth,0.,1.);
+  vec3 top=mix(vec3(.05,.45,.68),vec3(.02,.16,.36),d);
+  vec3 bot=mix(vec3(.02,.12,.32),vec3(.004,.02,.07),d);
+  vec3 col=mix(bot,top,pow(uv.y,1.3));
+  float sc=mix(1.6,2.6,d);
+  float c=caustic(p*sc+vec2(0.,d*2.),t);
+  float c2=caustic(p*sc*1.37+vec2(3.1,1.7),t*.8);
+  float caus=(c*.7+c2*.35)*mix(.55,.12,d)*(.35+uv.y*.9);
+  col+=vec3(.5,.95,1.)*caus;
+  // god rays from surface
+  vec2 src=vec2(.5*asp+sin(uTime*.1)*.3,1.35);vec2 dir=p-src;float ang=atan(dir.x,-dir.y);
+  float rays=0.;rays+=pow(max(0.,sin(ang*11.+uTime*.35)),6.)*.5;rays+=pow(max(0.,sin(ang*17.-uTime*.27+1.3)),8.)*.4;rays+=pow(max(0.,sin(ang*29.+uTime*.2+2.)),10.)*.25;
+  float rf=smoothstep(0.,1.,uv.y)*(1.-d*.85);
+  col+=vec3(.55,.9,1.)*rays*rf*.22;
+  // surface shimmer band
+  float surf=smoothstep(.86,1.,uv.y)*(1.-smoothstep(0.,.25,d));
+  col+=vec3(.7,.95,1.)*surf*(.25+.25*sin(p.x*18.+uTime*1.5+sin(p.x*7.-uTime)));
+  // floating particulate
+  vec2 g=p*vec2(60.,60.)+vec2(0.,uTime*.8);vec2 id=floor(g);vec2 f=fract(g)-.5;float h=hash(id);
+  col+=vec3(.7,.9,1.)*smoothstep(.06,0.,length(f-vec2(h-.5,fract(h*13.)-.5)*.6))*step(.93,h)*.35*(1.-d*.5);
+  // vignette
+  vec2 q=uv-.5;col*=1.-dot(q,q)*.9;
+  col=pow(col,vec3(.95));
+  gl_FragColor=vec4(col,1.);
+}`}));
+bgScene.add(bg);
+
+// Foreground: lifebuoy + bubbles
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(40,1,.1,100);cam.position.set(0,0,10);
+scene.add(new THREE.HemisphereLight(0xbff6ff,0x06224d,.75));
+const sun=new THREE.DirectionalLight(0xffffff,1.25);sun.position.set(3,6,5);scene.add(sun);
+const rim=new THREE.PointLight(0x7ff0ff,2.2,30);rim.position.set(-4,-2,3);scene.add(rim);
+
+// ring buoy with painted bands
+const tg=new THREE.TorusGeometry(1.35,.46,48,160);
+const cols=[];const P=tg.attributes.position;const cA=new THREE.Color(0xff4f33),cB=new THREE.Color(0xf5fbff);
+for(let i=0;i<P.count;i++){const a=Math.atan2(P.getY(i),P.getX(i));const band=Math.floor(((a+Math.PI)/(Math.PI*2))*8)%2;const c=band?cA:cB;cols.push(c.r,c.g,c.b)}
+tg.setAttribute('color',new THREE.Float32BufferAttribute(cols,3));
+const buoy=new THREE.Mesh(tg,new THREE.MeshPhysicalMaterial({vertexColors:true,roughness:.32,metalness:0,clearcoat:1,clearcoatRoughness:.15,sheen:.3}));
+// rope around
+const rope=new THREE.Mesh(new THREE.TorusGeometry(1.35,.5,8,200),new THREE.MeshStandardMaterial({color:0xeaf7ff,wireframe:true,transparent:true,opacity:.05}));
+const buoyGroup=new THREE.Group();buoyGroup.add(buoy,rope);scene.add(buoyGroup);
+
+// a second floating object: glass dumbbell
+const glass=new THREE.MeshPhysicalMaterial({color:0x7ff0ff,roughness:.05,metalness:0,transmission:.9,thickness:.6,transparent:true,opacity:.75,clearcoat:1});
+const db=new THREE.Group();
+const bar=new THREE.Mesh(new THREE.CylinderGeometry(.09,.09,1.4,20),glass);bar.rotation.z=Math.PI/2;
+const w1=new THREE.Mesh(new THREE.SphereGeometry(.36,32,24),glass);w1.position.x=-.78;
+const w2=w1.clone();w2.position.x=.78;db.add(bar,w1,w2);db.scale.setScalar(.9);scene.add(db);
+
+// bubbles
+const N=reduce?120:420;const bgeo=new THREE.BufferGeometry();
+const bp=new Float32Array(N*3),bs=new Float32Array(N),bv=new Float32Array(N),bph=new Float32Array(N);
+function seed(i,y){bp[i*3]=(Math.random()-.5)*22;bp[i*3+1]=y??(Math.random()-.5)*16;bp[i*3+2]=(Math.random()-.5)*8-1;bs[i]=Math.random()*.9+.15;bv[i]=Math.random()*.9+.4;bph[i]=Math.random()*6.28}
+for(let i=0;i<N;i++)seed(i);
+bgeo.setAttribute('position',new THREE.BufferAttribute(bp,3));bgeo.setAttribute('size',new THREE.BufferAttribute(bs,1));
+const bmat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,uniforms:{uPR:{value:renderer.getPixelRatio()},uH:{value:800}},
+vertexShader:`attribute float size;uniform float uPR,uH;varying float vS;void main(){vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;gl_PointSize=size*uPR*uH*.045/-mv.z;vS=size;}`,
+fragmentShader:`varying float vS;void main(){vec2 c=gl_PointCoord-.5;float d=length(c);if(d>.5)discard;
+float ring=smoothstep(.5,.44,d)*smoothstep(.3,.46,d);float hi=smoothstep(.16,.0,length(c-vec2(-.16,-.16)));
+float a=ring*.55+hi*.9+ .06;gl_FragColor=vec4(vec3(.75,.97,1.)*a,a);}`});
+const bubbles=new THREE.Points(bgeo,bmat);scene.add(bubbles);
+
+// bursts (click)
+const BN=160;const brg=new THREE.BufferGeometry();const brp=new Float32Array(BN*3),brs=new Float32Array(BN),brv=new Float32Array(BN*3);let bri=0;
+for(let i=0;i<BN;i++){brp[i*3+1]=-99}
+brg.setAttribute('position',new THREE.BufferAttribute(brp,3));brg.setAttribute('size',new THREE.BufferAttribute(brs,1));
+const bursts=new THREE.Points(brg,bmat);scene.add(bursts);
+const ray=new THREE.Vector3();
+burst=(cx,cy,n=24)=>{
+  ray.set(cx/innerWidth*2-1,-(cy/innerHeight)*2+1,.5).unproject(cam).sub(cam.position).normalize();
+  const k=(0-cam.position.z)/ray.z;const x=cam.position.x+ray.x*k,y=cam.position.y+ray.y*k;
+  for(let j=0;j<n;j++){const i=bri++%BN;brp[i*3]=x+(Math.random()-.5)*.3;brp[i*3+1]=y+(Math.random()-.5)*.3;brp[i*3+2]=(Math.random()-.5)*.6;brs[i]=Math.random()*.6+.12;
+    brv[i*3]=(Math.random()-.5)*1.4;brv[i*3+1]=Math.random()*2+1.2;brv[i*3+2]=(Math.random()-.5)*.6}
+  U.uRipple.value.set(cx/innerWidth,1-cy/innerHeight,U.uTime.value);
+};
+addEventListener('pointerdown',e=>{if(e.target.closest('a,button,input,summary,label'))return;burst(e.clientX,e.clientY,26)});
+
+// sizing
+function resize(){const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();U.uRes.value.set(w,h);bmat.uniforms.uH.value=h;}
+addEventListener('resize',resize);resize();
+
+const mouse=new THREE.Vector2(.5,.5),mt=new THREE.Vector2(.5,.5);
+addEventListener('pointermove',e=>{mt.set(e.clientX/innerWidth,1-e.clientY/innerHeight)},{passive:true});
+
+let last=performance.now(),T=0,depthS=0;
+function frame(now){
+  const dt=Math.min(.05,(now-last)/1000);last=now;T+=dt*(reduce?.2:1);
+  mouse.lerp(mt,.06);
+  depthS+=(scrollK-depthS)*.08;
+  U.uTime.value=T;U.uMouse.value.copy(mouse);U.uDepth.value=depthS;
+  const wide=innerWidth>860;
+  const heroY=scrollY/innerHeight; // 0 at top
+  // buoy floats at the surface; as you dive it drifts up and away
+  buoyGroup.position.set(wide?3.1:1.25,(wide?.2:-3.9)+heroY*6.5+Math.sin(T*1.1)*.18,wide?0:-1);
+  buoyGroup.scale.setScalar(wide?1:.62);
+  buoyGroup.rotation.set(.95+Math.sin(T*.8)*.12+(mouse.y-.5)*.6,Math.sin(T*.6)*.18+(mouse.x-.5)*.9,T*.15);
+  buoyGroup.visible=heroY<1.6;
+  db.position.set(wide?1.3:1.8,-1.9+heroY*5+Math.sin(T*.9+1)*.25,1.2);
+  db.rotation.set(T*.4,T*.55,.4+Math.sin(T*.5)*.3);
+  db.visible=wide&&heroY<1.8;
+  // bubbles rise
+  const P1=bgeo.attributes.position.array;
+  for(let i=0;i<N;i++){P1[i*3+1]+=bv[i]*dt*1.3;P1[i*3]+=Math.sin(T*2+bph[i])*dt*.25;if(P1[i*3+1]>8.5)seed(i,-8.5)}
+  bgeo.attributes.position.needsUpdate=true;
+  bubbles.position.y=-(scrollY/innerHeight)*1.5%17;
+  for(let i=0;i<BN;i++){if(brp[i*3+1]<-50)continue;brp[i*3]+=brv[i*3]*dt;brp[i*3+1]+=brv[i*3+1]*dt;brp[i*3+2]+=brv[i*3+2]*dt;brv[i*3]*=.97;brv[i*3+1]+=dt*.6;if(brp[i*3+1]>9)brp[i*3+1]=-99}
+  brg.attributes.position.needsUpdate=true;
+  cam.position.x+=((mouse.x-.5)*.6-cam.position.x)*.05;cam.position.y+=((mouse.y-.5)*.4-cam.position.y)*.05;cam.lookAt(0,0,0);
+  renderer.clear();renderer.render(bgScene,bgCam);renderer.render(scene,cam);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
